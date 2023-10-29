@@ -15,50 +15,48 @@ private:
    sf::RectangleShape tile;
    sf::Color color;
 
-   sf::RectangleShape* topNeighbor;
-   sf::RectangleShape* rightNeighbor;
-   sf::RectangleShape* bottomNeighbor;
-   sf::RectangleShape* leftNeighbor;
+   sf::Color* topNeighborColor;
+   sf::Color* rightNeighborColor;
+   sf::Color* bottomNeighborColor;
+   sf::Color* leftNeighborColor;
+
+   unsigned WIDTH;
+   unsigned HEIGHT;
 public:
    // Constructors & Destructors
-   Tile(sf::Color c)
-      : tile(sf::Vector2f(5, 5)), color(c)
+   Tile(sf::Color c, unsigned WIDTH = 5, unsigned HEIGHT = 5)
+      : tile(sf::Vector2f(WIDTH, HEIGHT)), color(c)
    {
       tile.setFillColor(color);
 
-      topNeighbor = nullptr;
-      rightNeighbor = nullptr;
-      bottomNeighbor = nullptr;
-      leftNeighbor = nullptr;
-   }
+      topNeighborColor = nullptr;
+      rightNeighborColor = nullptr;
+      bottomNeighborColor = nullptr;
+      leftNeighborColor = nullptr;
 
-   ~Tile()
-   {
-      delete topNeighbor;
-      delete rightNeighbor;
-      delete bottomNeighbor;
-      delete leftNeighbor;
+      this->WIDTH = WIDTH;
+      this->HEIGHT = HEIGHT;
    }
 
    // Getters & Setters
-   void setTopNeighbor(sf::RectangleShape& tn)
+   void setTopNeighborColor(sf::Color& tnc)
    {
-      topNeighbor = &tn;
+      topNeighborColor = &tnc;
    }
 
-   void setRightNeighbor(sf::RectangleShape& rn)
+   void setRightNeighborColor(sf::Color& rnc)
    {
-      rightNeighbor = &rn;
+      rightNeighborColor = &rnc;
    }
 
-   void setBottomNeighbor(sf::RectangleShape& bn)
+   void setBottomNeighborColor(sf::Color& bnc)
    {
-      bottomNeighbor = &bn;
+      bottomNeighborColor = &bnc;
    }
 
-   void setLeftNeighbor(sf::RectangleShape& ln)
+   void setLeftNeighborColor(sf::Color& lnc)
    {
-      leftNeighbor = &ln;
+      leftNeighborColor = &lnc;
    }
 
    void setColor(sf::Color c)
@@ -72,21 +70,21 @@ public:
       tile.setPosition(i, j);
    }
 
-   sf::RectangleShape* getTopNeighbor() const
+   sf::Color* getTopNeighborColor() const
    {
-      return topNeighbor;
+      return topNeighborColor;
    }
-   sf::RectangleShape* getRightNeighbor() const
+   sf::Color* getRightNeighborColor() const
    {
-      return rightNeighbor;
+      return rightNeighborColor;
    }
-   sf::RectangleShape* getBottomNeighbor() const
+   sf::Color* getBottomNeighborColor() const
    {
-      return bottomNeighbor;
+      return bottomNeighborColor;
    }
-   sf::RectangleShape* getLeftNeighbor() const
+   sf::Color* getLeftNeighborColor() const
    {
-      return leftNeighbor;
+      return leftNeighborColor;
    }
 
    sf::Color& getColor()
@@ -98,19 +96,29 @@ public:
    {
       return tile;
    }
+
+   unsigned getWidth() const
+   {
+      return WIDTH;
+   }
+
+   unsigned getHeight() const
+   {
+      return HEIGHT;
+   }
    
    // Overloads
    friend std::ostream& operator << (std::ostream& outs, const Tile& tile)
    {
       outs << std::left;
-      if(tile.getTopNeighbor() != nullptr)
-         outs << "Top Neighbor: " << tile.getTopNeighbor()->getFillColor().toInteger();
-      if(tile.getRightNeighbor() != nullptr)
-         outs << "Right Neighbor: " << tile.getRightNeighbor()->getFillColor().toInteger();
-      if(tile.getBottomNeighbor() != nullptr)
-         outs << "Bottom Neighbor: " << tile.getBottomNeighbor()->getFillColor().toInteger();
-      if(tile.getLeftNeighbor() != nullptr)     
-         outs << "Left Neighbor: " << tile.getLeftNeighbor()->getFillColor().toInteger();
+      if(tile.getTopNeighborColor() != nullptr)
+         outs << "Top Neighbor: " << tile.getTopNeighborColor()->toInteger() << std::endl;
+      if(tile.getRightNeighborColor() != nullptr)
+         outs << "Right Neighbor: " << tile.getRightNeighborColor()->toInteger() << std::endl;
+      if(tile.getBottomNeighborColor() != nullptr)
+         outs << "Bottom Neighbor: " << tile.getBottomNeighborColor()->toInteger() << std::endl;
+      if(tile.getLeftNeighborColor() != nullptr)     
+         outs << "Left Neighbor: " << tile.getLeftNeighborColor()->toInteger() << std::endl;
       return outs;
    }
 
