@@ -4,30 +4,26 @@
 #include <random>
 #include <time.h>
 #include "headers/Tile.h"
+#include "headers/WaveFunctionCollapse.h"
+
+// Sometimes crashes because first collapse makes a plus shaped 0 entropy pattern
 
 void setNeighbors(std::vector<std::vector<Tile>>& tiles, unsigned h = 200, unsigned w = 200)
 {
-   for(int i = 0; i < h; i+=5)
+   unsigned tileHeight = tiles[0][0].getHeight(), tileWidth = tiles[0][0].getWidth();
+   for(int i = 0; i < h; i+=tileHeight)
    {
-      for(int j = 0; j < w; j+=5)
+      for(int j = 0; j < w; j+=tileWidth)
       {
-         int iIndex = i/5, jIndex = j/5;
-         if(iIndex < 0) // Top neighbor exists
-         {
-            tiles[iIndex][jIndex].setTopNeighbor(tiles[iIndex-1][jIndex].getTile());
-         }
-         if(iIndex == (h/200)-1) // Bottom neighbor exists
-         {
-            tiles[iIndex][jIndex].setBottomNeighbor(tiles[iIndex+1][jIndex].getTile());
-         }
-         if(jIndex < 0) // Left neighbor exists
-         {
-            tiles[iIndex][jIndex].setLeftNeighbor(tiles[iIndex][jIndex-1].getTile());
-         }
-         if(jIndex == (w/200)-1) // Right neighbor exists
-         {
-            tiles[iIndex][jIndex].setRightNeighbor(tiles[iIndex][jIndex+1].getTile());
-         }
+         int iIndex = i/tileHeight, jIndex = j/tileWidth;
+         if(iIndex != 0) // Top neighbor exists
+            tiles[iIndex][jIndex].setTopNeighborColor(tiles[iIndex-1][jIndex].getColor());
+         if(iIndex != (h/tileHeight)-1) // Bottom neighbor exists
+            tiles[iIndex][jIndex].setBottomNeighborColor(tiles[iIndex+1][jIndex].getColor());
+         if(jIndex != 0) // Left neighbor exists
+            tiles[iIndex][jIndex].setLeftNeighborColor(tiles[iIndex][jIndex-1].getColor());
+         if(jIndex != (w/tileWidth)-1) // Right neighbor exists
+            tiles[iIndex][jIndex].setRightNeighborColor(tiles[iIndex][jIndex+1].getColor());
       }
    }
 }
@@ -54,15 +50,15 @@ std::vector<std::vector<Tile>> randomTiles(std::vector<sf::Color>& colors, unsig
 
 std::vector<std::vector<Tile>> customTiles(std::vector<sf::Color>& colors)
 {
-   /** INPUT CUSOM COLORS HERE **/
+   // INPUT CUSOM COLORS HERE //
    std::vector<std::vector<unsigned>> tileColors = {
-    {0, 0, 0, 0},
-    {1, 1, 1, 1},
-    {2, 2, 2, 2},
     {3, 3, 3, 3},
-    {0, 1, 2, 3}
+    {3, 3, 4, 4},
+    {3, 4, 4, 2},
+    {3, 4, 2, 2},
+    {3, 4, 2, 2}
    };
-   /*****************************/
+   //------------------------//
 
    std::vector<std::vector<Tile>> tiles;
    for(int i = 0; i < tileColors.size(); ++i)
@@ -93,8 +89,12 @@ int main()
    colors.push_back(sf::Color::Black);
    colors.push_back(sf::Color::Green);
    colors.push_back(sf::Color::Blue);
+   colors.push_back(sf::Color::Yellow);
 
    std::vector<std::vector<Tile>> tiles = customTiles(colors);
+
+   WaveFunctionCollapse wfc(tiles, colors, 10, 12);
+   std::vector<std::vector<Tile>> generatedTiles = wfc.generateTileSet();
 
    while(window.isOpen())
    {
@@ -108,12 +108,17 @@ int main()
       }
 
       window.clear();
+      /*
       for(int i = 0; i < tiles.size(); ++i)
          for(int j = 0; j < tiles[i].size(); ++j)
             window.draw(tiles[i][j].getTile());
+      */
+      for(int i = 0; i < generatedTiles.size(); ++i)
+         for(int j = 0; j < generatedTiles[i].size(); ++j)
+            window.draw(generatedTiles[i][j].getTile());
+
       window.display();
-
+      
    }
-
    return 0;
 }
