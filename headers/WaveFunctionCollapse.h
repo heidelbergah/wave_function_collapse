@@ -162,7 +162,7 @@ public:
      colors(c),
      ruleset(c.size(), std::vector<std::vector<sf::Color>>(4)),
      entropy(HEIGHT, std::vector<std::vector<sf::Color>>(WIDTH)),
-     generatedTiles(HEIGHT, std::vector<Tile>(WIDTH, Tile(sf::Color::Black)))
+     generatedTiles(HEIGHT, std::vector<Tile>(WIDTH, Tile(sf::Color::Transparent)))
    {
       this->WIDTH = WIDTH;
       this->HEIGHT = HEIGHT;
@@ -192,14 +192,13 @@ public:
    // Methods
    std::vector<std::vector<Tile>>& generateTileSet()
    {
-      std::vector<std::vector<Tile>> t(HEIGHT, std::vector<Tile>(WIDTH, Tile(sf::Color::Black)));
       generateRuleSet();
       std::cout << "RULESET RUNS" << std::endl;
       setStartingEntropy();
       std::cout << "SET_STARTING_ENTROPY RUNS" << std::endl;
       unsigned lowestEntropy;
-      unsigned startingIndexI = rand() % tiles.size();
-      unsigned startingIndexJ = rand() % tiles[0].size();
+      unsigned startingIndexI = rand() % generatedTiles.size();
+      unsigned startingIndexJ = rand() % generatedTiles[0].size();
       collapse(startingIndexI, startingIndexJ);
       std::cout << "COLLAPSE RUNS" << std::endl;
       printEntropy();
