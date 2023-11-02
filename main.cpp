@@ -6,57 +6,51 @@
 #include "headers/Tile.h"
 #include "headers/WaveFunctionCollapse.h"
 
-// Sometimes crashes because first collapse makes a plus shaped 0 entropy pattern
-
-void setNeighbors(std::vector<std::vector<Tile>>& tiles, unsigned h = 200, unsigned w = 200)
+void setNeighbors(std::vector<std::vector<Tile>>& tiles)
 {
-   unsigned tileHeight = tiles[0][0].getHeight(), tileWidth = tiles[0][0].getWidth();
-   for(int i = 0; i < h; i+=tileHeight)
+   for(int i = 0; i < tiles.size(); ++i)
    {
-      for(int j = 0; j < w; j+=tileWidth)
+      for(int j = 0; j < tiles[i].size(); ++j)
       {
-         int iIndex = i/tileHeight, jIndex = j/tileWidth;
-         if(iIndex != 0) // Top neighbor exists
-            tiles[iIndex][jIndex].setTopNeighborColor(tiles[iIndex-1][jIndex].getColor());
-         if(iIndex != (h/tileHeight)-1) // Bottom neighbor exists
-            tiles[iIndex][jIndex].setBottomNeighborColor(tiles[iIndex+1][jIndex].getColor());
-         if(jIndex != 0) // Left neighbor exists
-            tiles[iIndex][jIndex].setLeftNeighborColor(tiles[iIndex][jIndex-1].getColor());
-         if(jIndex != (w/tileWidth)-1) // Right neighbor exists
-            tiles[iIndex][jIndex].setRightNeighborColor(tiles[iIndex][jIndex+1].getColor());
+         if(i != 0) // Top neighbor exists
+            tiles[i][j].setTopNeighborColor(tiles[i-1][j].getColor());
+         if(i != tiles.size()-1) // Bottom neighbor exists
+            tiles[i][j].setBottomNeighborColor(tiles[i+1][j].getColor());
+         if(j != 0) // Left neighbor exists
+            tiles[i][j].setLeftNeighborColor(tiles[i][j-1].getColor());
+         if(j != tiles[i].size()-1) // Right neighbor exists
+            tiles[i][j].setRightNeighborColor(tiles[i][j+1].getColor());
       }
    }
-}
-
-std::vector<std::vector<Tile>> randomTiles(std::vector<sf::Color>& colors, unsigned HEIGHT = 200, unsigned WIDTH = 200)
-{
-   std::vector<std::vector<Tile>> tiles;
-   for(int i = 0; i < HEIGHT; i+=5)
-   {
-      std::vector<Tile> row;
-      for(int j = 0; j < WIDTH; j+=5)
-      {
-         int randomColorIndex = rand() % colors.size();
-         Tile tile(colors[randomColorIndex]);
-         tile.setPosition(j, i);
-         row.push_back(tile);
-      }
-      tiles.push_back(row);
-   }
-
-   setNeighbors(tiles);
-   return tiles;
 }
 
 std::vector<std::vector<Tile>> customTiles(std::vector<sf::Color>& colors)
 {
    // INPUT CUSOM COLORS HERE //
    std::vector<std::vector<unsigned>> tileColors = {
-    {3, 3, 3, 3},
-    {3, 3, 4, 4},
-    {3, 4, 4, 2},
-    {3, 4, 2, 2},
-    {3, 4, 2, 2}
+    // Template 1
+    /*
+    {1, 1, 1, 1},
+    {1, 1, 2, 2},
+    {1, 2, 2, 0},
+    {1, 2, 0, 0},
+    {1, 2, 0, 0}
+    */
+    // Template 2
+    
+    {1, 1, 1, 1, 1, 1},
+    {1, 2, 2, 2, 2, 1},
+    {1, 2, 0, 0, 2, 1},
+    {1, 2, 0, 0, 2, 1},
+    {1, 2, 2, 2, 2, 1},
+    {1, 1, 1, 1, 1, 1}
+    
+    // Example 3
+    /*
+    {0, 2, 0},
+    {2, 1, 2},
+    {0, 2, 0}
+    */
    };
    //------------------------//
 
@@ -64,7 +58,7 @@ std::vector<std::vector<Tile>> customTiles(std::vector<sf::Color>& colors)
    for(int i = 0; i < tileColors.size(); ++i)
    {
       std::vector<Tile> row;
-      for(int j = 0; j < tileColors[i].size(); ++j)
+     for(int j = 0; j < tileColors[i].size(); ++j)
       {
          Tile tile(colors[tileColors[i][j]]);
          tile.setPosition(j*5, i*5);
@@ -73,7 +67,7 @@ std::vector<std::vector<Tile>> customTiles(std::vector<sf::Color>& colors)
       tiles.push_back(row);
    }
 
-   setNeighbors(tiles, tiles.size()*5, tiles[0].size()*5);
+   setNeighbors(tiles);
    return tiles;
 }
 
@@ -85,15 +79,13 @@ int main()
    srand(time(NULL));
 
    std::vector<sf::Color> colors;
-   colors.push_back(sf::Color::White);
-   colors.push_back(sf::Color::Black);
    colors.push_back(sf::Color::Green);
    colors.push_back(sf::Color::Blue);
    colors.push_back(sf::Color::Yellow);
 
    std::vector<std::vector<Tile>> tiles = customTiles(colors);
 
-   WaveFunctionCollapse wfc(tiles, colors, 10, 12);
+   WaveFunctionCollapse wfc(tiles, colors, 15, 15);
    std::vector<std::vector<Tile>> generatedTiles = wfc.generateTileSet();
 
    while(window.isOpen())
@@ -108,14 +100,23 @@ int main()
       }
 
       window.clear();
-      /*
-      for(int i = 0; i < tiles.size(); ++i)
-         for(int j = 0; j < tiles[i].size(); ++j)
-            window.draw(tiles[i][j].getTile());
-      */
-      for(int i = 0; i < generatedTiles.size(); ++i)
-         for(int j = 0; j < generatedTiles[i].size(); ++j)
-            window.draw(generatedTiles[i][j].getTile());
+
+      if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+      {
+         for(int i = 0; i < tiles.size(); ++i)
+            for(int j = 0; j < tiles[i].size(); ++j)
+               window.draw(tiles[i][j].getTile());
+      }
+      else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+      {
+         for(int i = 0; i < generatedTiles.size(); ++i)
+            for(int j = 0; j < generatedTiles[i].size(); ++j)
+               window.draw(generatedTiles[i][j].getTile());
+      }
+      else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+      {
+         generatedTiles = wfc.generateTileSet();
+      }
 
       window.display();
       
