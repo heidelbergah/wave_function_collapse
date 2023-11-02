@@ -29,22 +29,22 @@ std::vector<std::vector<Tile>> customTiles(std::vector<sf::Color>& colors)
    // INPUT CUSOM COLORS HERE //
    std::vector<std::vector<unsigned>> tileColors = {
     // Template 1
-    /*
+    
     {1, 1, 1, 1},
     {1, 1, 2, 2},
     {1, 2, 2, 0},
     {1, 2, 0, 0},
     {1, 2, 0, 0}
-    */
-    // Template 2
     
+    // Template 2; NOT WORKING
+    /*
     {1, 1, 1, 1, 1, 1},
     {1, 2, 2, 2, 2, 1},
     {1, 2, 0, 0, 2, 1},
     {1, 2, 0, 0, 2, 1},
     {1, 2, 2, 2, 2, 1},
     {1, 1, 1, 1, 1, 1}
-    
+    */
     // Example 3
     /*
     {0, 2, 0},
